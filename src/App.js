@@ -1,25 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import { ethers } from "ethers";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () => {
+  const [lastBlockFetched, setLastBlockFetched] = useState({});
+  const url = "https://mainnet.infura.io/v3/98444e7274b244e2a93abbee91210037";
+  const provider = new ethers.providers.JsonRpcProvider(url);
+  try {
+    provider.on("block", async (blockNumber) => {
+      await getBlock(blockNumber);
+    });
+    const getBlock = async (blockNumber) => {
+      if (lastBlockFetched.number !== blockNumber) {
+        const block = await provider.getBlockWithTransactions(blockNumber);
+        setLastBlockFetched(block);
+        console.log(block);
+      }
+    };
+  } catch (e) {
+    console.log(e);
+  }
+
+  return <div>Hello</div>;
+};
 
 export default App;
